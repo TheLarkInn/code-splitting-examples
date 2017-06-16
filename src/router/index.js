@@ -1,15 +1,10 @@
 import Vue from 'vue';
 import Router from 'vue-router';
+import AsyncRoute from '@/utilities/asyncRoute';
 
 const Home = () => import('@/pages/Home');
 
 Vue.use(Router);
-
-const AsyncRoute = routeName => ({
-  path: `/${routeName}`,
-  name: routeName,
-  component: () => import(`@/pages/${routeName}`),
-});
 
 export default new Router({
   routes: [
