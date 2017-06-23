@@ -1,78 +1,55 @@
 <template>
   <div class="container">
-    <h1>Route-based Code Splitting</h1>
-
-    <code-example header="Router - Simple" filename="router/index.js">
-      import Vue from 'vue';
-      import Router from 'vue-router';
-
-      const Home = () => import('../pages/Home');
-      const About = () => import('../pages/About');
-
-      export default new Router({
-        routes: [
-          {
-            path: '/',
-            name: 'Home',
-            component: Home
-          },
-          {
-            path: '/About',
-            name: 'About',
-            component: About
-          }
-        ]
-      });
-    </code-example>
-
-    <code-example header="Router - Context Module" filename="router/index.js">
-      import Vue from 'vue';
-      import Router from 'vue-router';
-
-      const Home = () => import('../pages/Home');
-
-      const AsyncRoute = routeName => ({
-        path: `/${routeName}`,
-        name: routeName,
-        component: () => import(`@/pages/${routeName}`),
-      });
-
-      export default new Router({
-        routes: [
-          {
-            path: '/',
-            name: 'Home',
-            component: Home,
-          },
-          ...['Contact', 'Support', 'About', 'webpack'].map(AsyncRoute),
-        ],
-      });
-    </code-example>
-
-    <code-example header="Router - Context Module - Named Chunks" filename="router/index.js">
-      import Vue from 'vue';
-      import Router from 'vue-router';
-
-      const Home = () => import('../pages/Home');
-
-      const AsyncRoute = routeName => ({
-        path: `/${routeName}`,
-        name: routeName,
-        component: () => import(/* webpackChunkName: "lazy-route-chunk-[request]" */`@/pages/${routeName}`),
-      });
-
-      export default new Router({
-        routes: [
-          {
-            path: '/',
-            name: 'Home',
-            component: Home,
-          },
-          ...['Contact', 'Support', 'About', 'webpack'].map(AsyncRoute),
-        ],
-      });
-    </code-example>
+    <transition :css="false" @enter="onEnter" @leave="onLeave">
+      <webpack-logo v-if="animationType"></webpack-logo>
+    </transition>
+    <select @change="onSelectChange">
+      <option value=""></option>
+      <option value="spin">spin</option>
+      <option value="spin-reverse">spin reverse</option>
+    </select>
   </div>
 </template>
-<script>export default {};</script>
+<script>
+  import WebpackLogo from '@/components/WebpackLogo';
+  import TweenMax from 'gsap/TweenMax';
+
+  const getAnimationType = type => import(`@/animations/webpack-logo-animation-${type}.js`);
+
+  export default {
+    data() {
+      return {
+        animationFunction: null,
+        animationType: '',
+      };
+    },
+    components: {
+      WebpackLogo,
+    },
+    methods: {
+      onSelectChange($event) {
+        console.log($event);
+        this.animationType = $event.target.value;
+      },
+      onBeforeEnter(el) {
+        TweenMax.set(el, {
+          transformPerspective: 600,
+          perspective: 300,
+          transformStyle: 'preserve-3d',
+          autoAlpha: 1,
+        });
+      },
+      onEnter(el, done) {
+        getAnimationType(this.animationType)
+          .then(module => module.default)
+          .then(function (animate) { //eslint-disable-line
+            animate(el, done);
+          });
+      },
+      onLeave(el, done) {
+        done();
+      },
+    },
+  };
+</script>
 <style></style>

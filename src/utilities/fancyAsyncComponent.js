@@ -1,9 +1,9 @@
 import LoadingComponent from '@/components/LoadingComponent';
 // import ErrorComponent from '@/components/Error';
 
-const FancyAsyncComponent = componentName => ({
+const FancyAsyncComponent = componentPromise => ({
   // The component to load. Should be a Promise
-  component: import(`@/components/${componentName}`),
+  component: componentPromise,
   // A component to use while the async component is loading
   loading: LoadingComponent,
   // A component to use if the load fails
