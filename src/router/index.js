@@ -2,11 +2,11 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 
-import ExampleOne from '@/pages/ExampleOne';
 import ExampleTwo from '@/pages/ExampleTwo';
 import ExampleThree from '@/pages/ExampleThree';
 import ExampleFour from '@/pages/ExampleFour';
-const Home = () => import(/* webpackChunkname: "home" */'@/pages/Home');
+const Home = () => import(/* webpackChunkName: "Home" */'@/pages/Home');
+const ExampleOne = () => import(/* webpackChunkName: "ExampleOne" */'@/pages/ExampleOne');
 
 Vue.use(Router);
 
